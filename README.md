@@ -1,6 +1,6 @@
-# 🧰 PDF Toolkit (Terminal Edition)
+# 🧰 Work Toolkit (Terminal Edition)
 
-Aplikasi berbasis Python untuk mengolah file PDF secara **offline** lewat terminal.  
+Aplikasi berbasis Python untuk mengolah file secara **offline** lewat terminal.  
 Dapat dijalankan di **Linux dan Windows (via PyInstaller)**.  
 Dirancang modular — setiap fitur punya folder kerja (workspace) sendiri.
 
@@ -65,7 +65,7 @@ python main.py
 
 Akan muncul menu utama seperti:
 
-=== PDF TOOLKIT ===
+=== Work TOOLKIT ===
 1. Merge PDF
 2. Split PDF
 3. Watermark PDF

@@ -6,6 +6,10 @@ import pdfplumber
 from docx import Document
 from openpyxl import Workbook
 from fpdf import FPDF
+from pathlib import Path
+from modules import convert_image_table
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 
 # --- CONFIG PATH ---
 BASE = "workspace/convert"
@@ -45,24 +49,51 @@ def pdf_to_images():
     pause_convert()
 
 def images_to_pdf():
-    print("=== IMAGE → PDF ===")
-    images = [f for f in list_images()]
-    if not images:
-        print("Tidak ada file gambar di input/.")
+    print("=== IMAGE → PDF (Full Bleed) ===")
+
+    input_dir = Path(INPUT_DIR)
+    output_dir = Path(OUTPUT_DIR)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    image_files = sorted([
+        f for f in input_dir.iterdir()
+        if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]
+    ])
+
+    if not image_files:
+        print("❌ Tidak ada gambar di folder input.")
+        pause_convert()
         return
-    pdf = FPDF()
-    for fname in images:
-        img_path = os.path.join(INPUT_DIR, fname)
-        cover = Image.open(img_path)
-        w, h = cover.size
-        pdf_w, pdf_h = 210, 297
-        ratio = min(pdf_w / w, pdf_h / h)
-        new_w, new_h = w * ratio, h * ratio
-        pdf.add_page()
-        pdf.image(img_path, x=(210 - new_w) / 2, y=(297 - new_h) / 2, w=new_w, h=new_h)
-    out = os.path.join(OUTPUT_DIR, "merged_images.pdf")
-    pdf.output(out)
-    print("✅ Berhasil:", out)
+
+    output_file = output_dir / "hasil.pdf"
+    pdf = canvas.Canvas(str(output_file))
+
+    for img_path in image_files:
+        try:
+            img = Image.open(img_path)
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+
+            # Hilangkan margin putih (crop area non-kosong)
+            bbox = img.getbbox()
+            if bbox:
+                img = img.crop(bbox)
+
+            # Ukuran asli gambar (pixel)
+            width, height = img.size
+
+            # Set ukuran halaman PDF sesuai gambar
+            pdf.setPageSize((width, height))
+
+            # Gambar tanpa margin (full bleed)
+            pdf.drawImage(ImageReader(img), 0, 0, width=width, height=height)
+
+            pdf.showPage()
+        except Exception as e:
+            print(f"⚠️ Gagal memproses {img_path.name}: {e}")
+
+    pdf.save()
+    print(f"✅ PDF berhasil dibuat: {output_file}")
     pause_convert()
 
 def pdf_to_word():

@@ -14,7 +14,7 @@ def main_menu():
         "1": ("Watermark PDF", watermark.run_watermark),
         "2": ("Merge PDF", merge.run_merge),
         "3": ("Split PDF", split.run_split),
-        "4": ("Compress PDF", compress.run_compress),
+        "4": ("Compress PDF/IMAGE", compress.run_compress),
         "5": ("Rotate PDF", rotate.run_rotate),
         "6": ("Convert PDF / Image / Word / Excel", convert.run_convert),
         "0": ("Keluar", None)

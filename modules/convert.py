@@ -7,7 +7,6 @@ from docx import Document
 from openpyxl import Workbook
 from fpdf import FPDF
 from pathlib import Path
-from modules import convert_image_table
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 
